@@ -3,7 +3,6 @@
 #SBATCH --nodes=1   # number of nodes
 #SBATCH --cpus-per-task=40   # number of CPU cores per task
 #SBATCH --partition=standard  # partition
-#SBATCH -J "0000XXXX"   # job name
 #SBATCH --mail-user=rts3dd@virginia.edu   # email address
 #SBATCH --mail-type=END
 #SBATCH --mail-type=FAIL
@@ -15,7 +14,7 @@ module load blast
 
 #Give the Accesssion for the sequence which will also be the output filename and a number
 
-accession=0000XXXX
+accession=${1?Usage: $0 <accession>}
 
 filename="$accession"
 extension=out
@@ -42,13 +41,13 @@ deltablast -db "nr tsa_nr env_nr cdd_delta" -query  "$accession".fsa -num_thread
 
 #Creates files for non-opisthokonta proteins with their phyla
 
-awk -F "," 'NR > 1 {for (i=2; i<=4; i++) sub (/;.*$/, _, $i)} 1 {print $2 "\t" $3 "\t" $4 "\t" $5 "\t" $16 "\t" $17}' "${new_filename}" \
-> "${new_filename%.*}"_short.out
+awk -F "," 'NR > 1 {for (i=2; i<=4; i++) sub (/;.*$/, _, $i)} 1 {print $2 "\t" $3 "\t" $4 "\t" $5 "\t" $16 "\t" $17}' "${new_filename}" > "${new_fil
+ename%.*}"_short.out
 taxonkit lineage -i 1 "${new_filename%.*}"_short.out | awk -F ";" '{print $3}' >"${new_filename%.*}"_Phyla.out
 paste "${new_filename%.*}"_Phyla.out "${new_filename%.*}"_short.out >"${new_filename%.*}"_PhylaShort.out
 
 grep -iv opisthokont "${new_filename%.*}"_PhylaShort.out > N-O_HITS_"${accession}_$(printf %02d $counter)".out
 
-#move PSSM files into archives
-mkdir -p outpssm_'$(printf %2d $counter)'/
-mv outpssm.out* outpssm_'$(printf %2d $counter)'/
+#move PSSM fiels into archives
+mkdir outpssm_"$(printf %2d $counter)"/
+mv outpssm.out* outpssm_"$(printf %2d $counter)"/
