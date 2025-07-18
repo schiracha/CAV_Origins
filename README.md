@@ -1,4 +1,4 @@
-# BLASTnFold
+# BLASTnFold:BASH scripts and protocols to optimize structural homology searches using AlphaFold
 BLAST+ SLURM scripts for searching for distant homologues in NCBI databases
 AF3 SLURM scripts for creating repositories to run AF3 oligomer modeling and organize output
 
